@@ -1,0 +1,49 @@
+drupal_content_validator.settings:
+  type: config_object
+  label: 'Content Validator Settings'
+  mapping:
+    bundles:
+      type: sequence
+      label: 'Bundle configurations'
+      sequence:
+        type: mapping
+        label: 'Bundle config'
+        mapping:
+          enabled:
+            type: boolean
+            label: 'Validation enabled'
+          blocking:
+            type: boolean
+            label: 'Block publication on failure'
+          rules:
+            type: mapping
+            label: 'Validation rules'
+            mapping:
+              min_body_length:
+                type: mapping
+                mapping:
+                  enabled:
+                    type: boolean
+                  min_length:
+                    type: integer
+              forbidden_words:
+                type: mapping
+                mapping:
+                  enabled:
+                    type: boolean
+                  words:
+                    type: string
+              required_fields:
+                type: mapping
+                mapping:
+                  enabled:
+                    type: boolean
+                  fields:
+                    type: string
+              has_image:
+                type: mapping
+                mapping:
+                  enabled:
+                    type: boolean
+                  field:
+                    type: string

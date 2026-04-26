@@ -1,0 +1,102 @@
+<?php
+
+/**
+ * @file
+ * Drupal Content Validator module.
+ *
+ * Provides configurable business rule validation for Drupal content types.
+ * Validates nodes before publishing and exposes results via a configurable block.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for nodes.
+ *
+ * Runs validation rules before a node is saved.
+ * Blocks publication if validation fails and the config requires it.
+ */
+function drupal_content_validator_node_presave(EntityInterface $entity) {
+  if (!$entity instanceof NodeInterface) {
+    return;
+  }
+
+  // Only validate on publish transitions.
+  $is_publishing = $entity->isPublished() && (
+    $entity->isNew() || !$entity->original?->isPublished()
+  );
+
+  if (!$is_publishing) {
+    return;
+  }
+
+  /** @var \Drupal\drupal_content_validator\Service\ContentValidatorService $validator */
+  $validator = \Drupal::service('drupal_content_validator.validator');
+  $result = $validator->validate($entity);
+
+  if (!$result->isValid() && $validator->isBlockingEnabled($entity->bundle())) {
+    $entity->setUnpublished();
+    \Drupal::messenger()->addError(t(
+      'Content "@title" could not be published. Validation errors: @errors',
+      [
+        '@title'  => $entity->label(),
+        '@errors' => implode(', ', $result->getErrors()),
+      ]
+    ));
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Adds a validation summary to node edit forms.
+ */
+function drupal_content_validator_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  // Target node add/edit forms only.
+  if (!preg_match('/^node_(\w+)_(edit|add)_form$/', $form_id, $matches)) {
+    return;
+  }
+
+  $bundle = $matches[1];
+
+  /** @var \Drupal\drupal_content_validator\Service\ContentValidatorService $validator */
+  $validator = \Drupal::service('drupal_content_validator.validator');
+
+  if (!$validator->isBundleEnabled($bundle)) {
+    return;
+  }
+
+  // Attach the live validation JS library.
+  $form['#attached']['library'][] = 'drupal_content_validator/validator';
+
+  // Add a summary container that JS will populate.
+  $form['content_validator_summary'] = [
+    '#type'       => 'container',
+    '#attributes' => [
+      'id'    => 'content-validator-summary',
+      'class' => ['content-validator-summary', 'content-validator-summary--pending'],
+    ],
+    '#weight'     => -100,
+    '#markup'     => '<div class="content-validator-summary__label">' . t('Content validation pending…') . '</div>',
+  ];
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function drupal_content_validator_theme(): array {
+  return [
+    'content_validator_block' => [
+      'variables' => [
+        'is_valid'   => TRUE,
+        'errors'     => [],
+        'warnings'   => [],
+        'collapsed'  => FALSE,
+        'node_label' => '',
+      ],
+    ],
+  ];
+}

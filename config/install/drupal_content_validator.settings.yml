@@ -1,0 +1,3 @@
+# Default configuration for drupal_content_validator.
+# All bundles start disabled — enable them in /admin/config/content/content-validator
+bundles: {}

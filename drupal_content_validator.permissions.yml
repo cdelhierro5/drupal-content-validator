@@ -1,0 +1,4 @@
+'administer content validator':
+  title: 'Administer Content Validator'
+  description: 'Configure validation rules and block settings.'
+  restrict access: true

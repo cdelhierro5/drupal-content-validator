@@ -1,0 +1,7 @@
+drupal_content_validator.settings:
+  path: '/admin/config/content/content-validator'
+  defaults:
+    _form: '\Drupal\drupal_content_validator\Form\ContentValidatorSettingsForm'
+    _title: 'Content Validator Settings'
+  requirements:
+    _permission: 'administer content validator'

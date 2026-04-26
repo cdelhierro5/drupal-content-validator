@@ -1,0 +1,16 @@
+services:
+
+  drupal_content_validator.validator:
+    class: Drupal\drupal_content_validator\Service\ContentValidatorService
+    arguments:
+      - '@config.factory'
+      - '@entity_type.manager'
+      - '@logger.factory'
+
+  drupal_content_validator.node_subscriber:
+    class: Drupal\drupal_content_validator\EventSubscriber\NodeValidationSubscriber
+    arguments:
+      - '@drupal_content_validator.validator'
+      - '@messenger'
+    tags:
+      - { name: event_subscriber }

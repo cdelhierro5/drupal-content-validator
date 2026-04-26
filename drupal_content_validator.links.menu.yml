@@ -1,0 +1,6 @@
+drupal_content_validator.settings:
+  title: 'Content Validator'
+  description: 'Configure content validation rules per content type.'
+  parent: system.admin_config_content
+  route_name: drupal_content_validator.settings
+  weight: 50

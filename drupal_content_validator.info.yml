@@ -1,0 +1,10 @@
+name: 'Content Validator'
+type: module
+description: 'Configurable business rule validation for Drupal content. Validates nodes before publishing and displays validation status via a configurable block.'
+package: 'Custom'
+core_version_requirement: ^10 || ^11
+version: '1.0.0'
+
+dependencies:
+  - drupal:node
+  - drupal:block

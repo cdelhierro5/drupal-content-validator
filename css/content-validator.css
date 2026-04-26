@@ -1,0 +1,200 @@
+/* ── Content Validator — Design System ──────────────────────────────────────
+   Palette:
+     Valid:   #22c55e (green-500)   bg: #f0fdf4   border: #86efac
+     Warning: #f59e0b (amber-500)  bg: #fffbeb   border: #fde68a
+     Error:   #ef4444 (red-500)    bg: #fef2f2   border: #fca5a5
+     Neutral: #6b7280 (gray-500)
+   ────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --cv-valid:     #22c55e;
+  --cv-valid-bg:  #f0fdf4;
+  --cv-valid-bd:  #86efac;
+  --cv-warn:      #f59e0b;
+  --cv-warn-bg:   #fffbeb;
+  --cv-warn-bd:   #fde68a;
+  --cv-error:     #ef4444;
+  --cv-error-bg:  #fef2f2;
+  --cv-error-bd:  #fca5a5;
+  --cv-radius:    8px;
+  --cv-transition: .2s ease;
+}
+
+/* ── Main block ──────────────────────────────────────────────────────────── */
+
+.content-validator-block {
+  border-radius: var(--cv-radius);
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  transition: box-shadow var(--cv-transition);
+}
+.content-validator-block:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+
+.content-validator-block--valid   { border-color: var(--cv-valid-bd);   background: var(--cv-valid-bg);  }
+.content-validator-block--invalid { border-color: var(--cv-error-bd);   background: var(--cv-error-bg);  }
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+
+.content-validator-block__header {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+
+.content-validator-block--valid   .content-validator-block__header { background: var(--cv-valid-bg);  }
+.content-validator-block--invalid .content-validator-block__header { background: var(--cv-error-bg);  }
+
+.content-validator-block__icon { font-size: 1.1rem; flex-shrink: 0; }
+.content-validator-block__title { font-weight: 600; font-size: .875rem; flex: 1; }
+
+/* ── Progress bar ────────────────────────────────────────────────────────── */
+
+.content-validator-block__progress {
+  height: 4px;
+  background: rgba(0,0,0,.08);
+  overflow: hidden;
+}
+
+.content-validator-block__progress-bar {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--cv-error);
+  transition: width .5s cubic-bezier(.4,0,.2,1), background .3s;
+}
+
+.content-validator-block--valid .content-validator-block__progress-bar {
+  background: var(--cv-valid);
+}
+
+/* ── Badge ───────────────────────────────────────────────────────────────── */
+
+.content-validator-block__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .15rem .5rem;
+  border-radius: 99px;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  flex-shrink: 0;
+}
+
+.content-validator-block--valid   .content-validator-block__badge { background: var(--cv-valid);  color: #fff; }
+.content-validator-block--invalid .content-validator-block__badge { background: var(--cv-error);  color: #fff; }
+
+/* ── Rule lists ──────────────────────────────────────────────────────────── */
+
+.content-validator-block__errors,
+.content-validator-block__warnings {
+  list-style: none;
+  margin: 0;
+  padding: .5rem 1rem .75rem;
+}
+
+.content-validator-block__error,
+.content-validator-block__warning {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  padding: .35rem 0;
+  font-size: .825rem;
+  line-height: 1.4;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+}
+
+.content-validator-block__error:last-child,
+.content-validator-block__warning:last-child { border-bottom: none; }
+
+.content-validator-block__error::before  { content: '✕'; color: var(--cv-error); font-weight: 700; flex-shrink: 0; margin-top: .05rem; }
+.content-validator-block__warning::before { content: '⚠'; color: var(--cv-warn);  flex-shrink: 0; margin-top: .05rem; }
+
+.content-validator-block__error   { color: #7f1d1d; }
+.content-validator-block__warning { color: #78350f; }
+
+/* Warnings section header */
+.content-validator-block__warnings-label {
+  display: block;
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--cv-warn);
+  padding: .5rem 1rem .1rem;
+}
+
+/* ── Collapsed state ─────────────────────────────────────────────────────── */
+
+.content-validator-block--collapsed .content-validator-block__errors,
+.content-validator-block--collapsed .content-validator-block__warnings,
+.content-validator-block--collapsed .content-validator-block__progress { display: none; }
+
+/* ── Inline editor summary (node form banner) ────────────────────────────── */
+
+#content-validator-summary {
+  border-radius: var(--cv-radius);
+  padding: .75rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: .85rem;
+  border: 1px solid transparent;
+  transition: background .3s, border-color .3s;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated left accent bar */
+#content-validator-summary::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px;
+  border-radius: 0;
+  transition: background .3s;
+}
+
+.content-validator-summary--pending {
+  background: #fffbeb;
+  border-color: var(--cv-warn-bd);
+}
+.content-validator-summary--pending::before { background: var(--cv-warn); }
+
+.content-validator-summary--valid {
+  background: var(--cv-valid-bg);
+  border-color: var(--cv-valid-bd);
+}
+.content-validator-summary--valid::before { background: var(--cv-valid); }
+
+.content-validator-summary--invalid {
+  background: var(--cv-error-bg);
+  border-color: var(--cv-error-bd);
+}
+.content-validator-summary--invalid::before { background: var(--cv-error); }
+
+.content-validator-summary__label {
+  font-weight: 600;
+  margin-bottom: .3rem;
+}
+
+.content-validator-summary__errors {
+  margin: .3rem 0 0 1rem;
+  padding: 0;
+  font-size: .8rem;
+  color: #7f1d1d;
+}
+
+/* ── Char counter injected by JS ─────────────────────────────────────────── */
+
+.cv-char-counter {
+  font-size: .72rem;
+  color: #9ca3af;
+  text-align: right;
+  margin-top: .2rem;
+  font-variant-numeric: tabular-nums;
+  transition: color .2s;
+}
+
+.cv-char-counter--low  { color: var(--cv-error); font-weight: 600; }
+.cv-char-counter--ok   { color: var(--cv-valid); }

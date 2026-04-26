@@ -1,0 +1,70 @@
+{#
+/**
+ * @file
+ * content-validator-block.html.twig
+ *
+ * Variables:
+ * - is_valid:   boolean
+ * - errors:     string[]   — blocking errors
+ * - warnings:   string[]   — non-blocking warnings
+ * - collapsed:  boolean
+ * - node_label: string
+ * - passed:     int        — rules passed count
+ * - total:      int        — total rules count
+ */
+#}
+
+{% set pct = total > 0 ? ((passed / total) * 100)|round : (is_valid ? 100 : 0) %}
+
+<div
+  class="content-validator-block content-validator-block--{{ is_valid ? 'valid' : 'invalid' }}{{ collapsed ? ' content-validator-block--collapsed' : '' }}"
+  role="region"
+  aria-label="{{ 'Content validation'|t }}"
+>
+  {# Header #}
+  <div class="content-validator-block__header">
+    <span class="content-validator-block__icon" aria-hidden="true">
+      {{ is_valid ? '✅' : '❌' }}
+    </span>
+    <strong class="content-validator-block__title">
+      {% if is_valid %}
+        {{ 'All rules passing'|t }}
+      {% else %}
+        {{ '@n issue(s) found'|t({'@n': errors|length}) }}
+      {% endif %}
+    </strong>
+    <span class="content-validator-block__badge">
+      {{ passed }}/{{ total }}
+    </span>
+  </div>
+
+  {# Progress bar #}
+  <div class="content-validator-block__progress" aria-hidden="true">
+    <div
+      class="content-validator-block__progress-bar"
+      style="width: {{ pct }}%"
+    ></div>
+  </div>
+
+  {# Errors #}
+  {% if errors is not empty %}
+    <ul class="content-validator-block__errors" role="list">
+      {% for error in errors %}
+        <li class="content-validator-block__error">{{ error }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {# Warnings #}
+  {% if warnings is not empty %}
+    <span class="content-validator-block__warnings-label">
+      {{ 'Warnings'|t }}
+    </span>
+    <ul class="content-validator-block__warnings" role="list">
+      {% for warning in warnings %}
+        <li class="content-validator-block__warning">{{ warning }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+</div>
